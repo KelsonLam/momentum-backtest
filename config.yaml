@@ -1,0 +1,41 @@
+# Default configuration for the momentum backtest.
+# Everything here can be overridden on the command line (see scripts/run_backtest.py).
+
+universe:
+  # A spread of large, liquid US names across sectors. Swap in whatever you like.
+  - AAPL
+  - MSFT
+  - AMZN
+  - GOOGL
+  - META
+  - NVDA
+  - JPM
+  - JNJ
+  - PG
+  - XOM
+  - KO
+  - DIS
+  - HD
+  - BAC
+  - PFE
+  - CSCO
+  - INTC
+  - WMT
+  - VZ
+  - CVX
+
+period:
+  start: "2010-01-01"
+  end: "2024-12-31"
+
+strategy:
+  lookback_months: 12     # size of the formation window
+  gap_months: 1           # months skipped before formation end (the classic 12-1 momentum)
+  top_quantile: 0.30      # fraction of the universe held long
+  long_short: false       # if true, short the bottom quantile as well
+  rebalance: "ME"         # pandas month-end frequency
+
+costs:
+  transaction_cost_bps: 10   # round-trip cost charged on turnover, in basis points
+
+risk_free_rate: 0.0   # annualized, used for Sharpe and Sortino
