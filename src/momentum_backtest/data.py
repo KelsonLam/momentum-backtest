@@ -56,6 +56,12 @@ class YFinanceLoader:
         self, tickers: Sequence[str], start: str, end: str
     ) -> pd.DataFrame:
         tickers = list(tickers)
+        if not tickers:
+            raise ValueError("No tickers given. Provide at least one symbol.")
+        if pd.Timestamp(start) >= pd.Timestamp(end):
+            raise ValueError(
+                f"start ({start}) must be earlier than end ({end})."
+            )
         cache_path = self.cache_dir / _cache_key(tickers, start, end)
 
         if self.use_cache and cache_path.exists():
