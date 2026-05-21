@@ -36,6 +36,21 @@ class BacktestConfig:
     transaction_cost_bps: float = 10.0
     risk_free_rate: float = 0.0   # annualized, used downstream by the metrics
 
+    def __post_init__(self) -> None:
+        # Fail loudly and early on nonsense settings, rather than producing a
+        # silently wrong backtest.
+        if self.lookback_months <= self.gap_months:
+            raise ValueError(
+                "lookback_months must be greater than gap_months "
+                f"(got lookback={self.lookback_months}, gap={self.gap_months})."
+            )
+        if self.gap_months < 0:
+            raise ValueError("gap_months cannot be negative.")
+        if not 0.0 < self.top_quantile <= 1.0:
+            raise ValueError("top_quantile must be in the interval (0, 1].")
+        if self.transaction_cost_bps < 0:
+            raise ValueError("transaction_cost_bps cannot be negative.")
+
 
 @dataclass
 class BacktestResult:
@@ -88,6 +103,17 @@ def run_backtest(
     monthly_prices: pd.DataFrame, config: BacktestConfig
 ) -> BacktestResult:
     """Run the momentum backtest on a frame of month-end prices."""
+    if monthly_prices.empty or monthly_prices.shape[1] == 0:
+        raise ValueError("monthly_prices is empty. Nothing to backtest.")
+
+    needed = config.lookback_months + config.gap_months + 1
+    if len(monthly_prices) < needed:
+        raise ValueError(
+            f"Not enough history: the formation window needs at least {needed} "
+            f"months but only {len(monthly_prices)} were given. Use a longer "
+            "date range or a shorter lookback."
+        )
+
     scores = momentum_score(
         monthly_prices,
         lookback_months=config.lookback_months,
