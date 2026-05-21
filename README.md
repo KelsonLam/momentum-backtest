@@ -72,7 +72,7 @@ strategy code.
 ## Getting started
 
 ```bash
-git clone https://github.com/lamkelson/momentum-backtest.git
+git clone https://github.com/KelsonLam/momentum-backtest.git
 cd momentum-backtest
 pip install -r requirements.txt
 python scripts/run_backtest.py
