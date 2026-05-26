@@ -155,6 +155,22 @@ If you take one thing from this section: the strategy can look good or bad
 depending on the universe, the dates, and the cost assumption, and an honest
 write-up names those dependencies instead of hiding them.
 
+## Benchmark-relative metrics
+
+Absolute return is only half the question. `benchmark.py` adds the
+active-management measures that say whether the strategy beat a simple benchmark,
+and how reliably:
+
+```python
+from momentum_backtest import benchmark
+benchmark.information_ratio(strategy_returns, benchmark_returns)
+benchmark.tracking_error(strategy_returns, benchmark_returns)
+benchmark.beta(strategy_returns, benchmark_returns)
+```
+
+A large absolute return that simply tracks the benchmark shows up as a low
+information ratio, which is the honest read: it was beta, not skill.
+
 ## Tests
 
 ```bash
